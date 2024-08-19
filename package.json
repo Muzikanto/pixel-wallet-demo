@@ -9,6 +9,7 @@
     "lint": "biome check ./src",
     "preview": "vite preview"
   },
+  "homepage": "docs",
   "dependencies": {
     "@tanstack/react-query": "5.45.1",
     "react": "^18.3.1",
