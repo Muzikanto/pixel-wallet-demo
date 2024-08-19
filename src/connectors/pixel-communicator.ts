@@ -12,7 +12,7 @@ export class PixelCommunicator {
   protected auth = new PixelAuth();
 
   constructor(opts: { url: string }) {
-    const socket = io(this.url, {
+    const socket = io(opts.url, {
       reconnectionDelayMax: 10000,
       auth: {
         signature: this.auth.get(),
