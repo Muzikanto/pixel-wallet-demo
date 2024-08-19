@@ -8,7 +8,7 @@ export const config = createConfig({
   connectors: [
     injected(),
     coinbaseWallet(),
-    pixelWallet(),
+    pixelWallet({ url: "ws://api.hellopixel.network/sdk" }),
     walletConnect({ projectId: import.meta.env.VITE_WC_PROJECT_ID }),
   ],
   transports: {

@@ -3,7 +3,11 @@ import { pixelLogger } from "./pixel.logger.ts";
 
 export class PixelSdk {
   protected listeners: Record<string, Function[]> = {};
-  protected communicator = new PixelCommunicator();
+  protected communicator: PixelCommunicator;
+
+  constructor(opts: { url?: string }) {
+    this.communicator = new PixelCommunicator({ url: opts.url || "ws://api.hellopixel.network/sdk" });
+  }
 
   public connect() {
     this.communicator.connect();
@@ -21,7 +25,7 @@ export class PixelSdk {
           // запуси сигнатуры в локалсторадж
           // ожидание вебсокета от фронта через бек сюда
 
-          const { data: accounts, status } = await this.communicator.send({ method: "eth_requestAccounts" });
+          const { data: accounts } = await this.communicator.send({ method: "eth_requestAccounts" });
           return accounts;
         case "eth_sendTransaction":
           const { data: hash } = await this.communicator.send({ method: "eth_sendTransaction", params });
@@ -47,18 +51,18 @@ export class PixelSdk {
           return null;
       }
     } catch (error) {
-      pixelLogger.error(error.message);
+      pixelLogger.error((error as Error).message);
       throw error;
     }
   };
 
-  emit = (eventName, params) => {
+  emit = (eventName: string, params: any) => {
     this.listeners[eventName]?.map((listener) => {
       listener(params);
     });
   };
 
-  on = (eventType, callback) => {
+  on = (eventType: string, callback: Function) => {
     let listeners = this.listeners[eventType];
 
     if (!listeners) {
@@ -71,7 +75,7 @@ export class PixelSdk {
     }
   };
 
-  removeListener = (eventType, callback) => {
+  removeListener = (eventType: string, callback: Function) => {
     this.listeners[eventType] = this.listeners[eventType].filter((l) => l !== callback);
   };
 }

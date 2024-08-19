@@ -4,16 +4,15 @@ import { PixelSdk } from "./pixel-sdk.ts";
 
 pixelWallet.type = "pixelWallet";
 
-export function pixelWallet(parameters = {}) {
+export function pixelWallet(parameters: { url?: string } = {}) {
   return version4(parameters);
 }
 
-function version4(parameters) {
-  let sdk;
-  let walletProvider;
-  let accountsChanged;
-  let chainChanged;
-  let disconnect;
+function version4(parameters: { url?: string } = {}) {
+  let walletProvider: any;
+  let accountsChanged: any;
+  let chainChanged: any;
+  let disconnect: any;
 
   return createConnector((config) => {
     const connector = {
@@ -21,7 +20,7 @@ function version4(parameters) {
       name: "Pixel Wallet",
       supportsSimulation: true,
       type: pixelWallet.type,
-      async connect({ chainId } = {}) {
+      async connect({ chainId }: { chainId?: number } = {}) {
         try {
           const provider = await this.getProvider();
 
@@ -29,7 +28,7 @@ function version4(parameters) {
             await provider.request({
               method: "eth_requestAccounts",
             })
-          ).map((x) => getAddress(x));
+          ).map((x: string) => getAddress(x));
 
           if (!accountsChanged) {
             accountsChanged = this.onAccountsChanged.bind(this);
@@ -57,9 +56,11 @@ function version4(parameters) {
           return { accounts, chainId: currentChainId };
         } catch (error) {
           if (
-            /(user closed modal|accounts received is empty|user denied account|request rejected)/i.test(error.message)
+            /(user closed modal|accounts received is empty|user denied account|request rejected)/i.test(
+              (error as Error).message,
+            )
           )
-            throw new UserRejectedRequestError(error);
+            throw new UserRejectedRequestError(error as Error);
           throw error;
         }
       },
@@ -86,7 +87,7 @@ function version4(parameters) {
           await provider.request({
             method: "eth_accounts",
           })
-        ).map((x) => getAddress(x));
+        ).map((x: string) => getAddress(x));
       },
       async getChainId() {
         const provider = await this.getProvider();
@@ -97,26 +98,8 @@ function version4(parameters) {
       },
       async getProvider() {
         if (!walletProvider) {
-          if (Math.random()) {
-            walletProvider = new PixelSdk();
-            return walletProvider;
-          }
-
-          // Unwrapping import for Vite compatibility.
-          // See: https://github.com/vitejs/vite/issues/9703
-          const CoinbaseWalletSDK = await (async () => {
-            const { default: SDK } = await import("@coinbase/wallet-sdk");
-            if (typeof SDK !== "function" && typeof SDK.default === "function") return SDK.default;
-            return SDK;
-          })();
-          sdk = new CoinbaseWalletSDK({
-            ...parameters,
-            appChainIds: config.chains.map((x) => x.id),
-          });
-          walletProvider = sdk.makeWeb3Provider({
-            ...parameters,
-            options: parameters.preference ?? "all",
-          });
+          walletProvider = new PixelSdk({ url: parameters.url });
+          return walletProvider;
         }
         return walletProvider;
       },
@@ -128,7 +111,7 @@ function version4(parameters) {
           return false;
         }
       },
-      async switchChain({ addEthereumChainParameter, chainId }) {
+      async switchChain({ addEthereumChainParameter, chainId }: { addEthereumChainParameter?: any; chainId: number }) {
         const chain = config.chains.find((chain) => chain.id === chainId);
         if (!chain) throw new SwitchChainError(new ChainNotConfiguredError());
         const provider = await this.getProvider();
@@ -140,7 +123,7 @@ function version4(parameters) {
           return chain;
         } catch (error) {
           // Indicates chain is not added to provider
-          if (error.code === 4902) {
+          if ((error as any).code === 4902) {
             try {
               let blockExplorerUrls;
               if (addEthereumChainParameter?.blockExplorerUrls)
@@ -163,26 +146,27 @@ function version4(parameters) {
               });
               return chain;
             } catch (error) {
-              throw new UserRejectedRequestError(error);
+              throw new UserRejectedRequestError(error as Error);
             }
           }
-          throw new SwitchChainError(error);
+          throw new SwitchChainError(error as Error);
         }
       },
-      onAccountsChanged(accounts) {
+      onAccountsChanged(accounts: string[]) {
         if (accounts.length === 0) this.onDisconnect();
         else
           config.emitter.emit("change", {
             accounts: accounts.map((x) => getAddress(x)),
           });
       },
-      onChainChanged(chain) {
+      onChainChanged(chain: string) {
         const chainId = Number(chain);
         config.emitter.emit("change", { chainId });
       },
-      async onDisconnect(_error) {
+      async onDisconnect(_error?: Error) {
         config.emitter.emit("disconnect");
         const provider = await this.getProvider();
+
         if (accountsChanged) {
           provider.removeListener("accountsChanged", accountsChanged);
           accountsChanged = undefined;
