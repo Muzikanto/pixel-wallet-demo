@@ -1,4 +1,5 @@
 import { PixelCommunicator } from "./pixel-communicator.ts";
+import { pixelLogger } from "./pixel.logger.ts";
 
 export class PixelSdk {
   protected listeners: Record<string, Function[]> = {};
@@ -20,18 +21,15 @@ export class PixelSdk {
           // запуси сигнатуры в локалсторадж
           // ожидание вебсокета от фронта через бек сюда
 
-          const { data: accounts } =  await this.communicator.send({ method: "eth_requestAccounts" });
-
+          const { data: accounts, status } = await this.communicator.send({ method: "eth_requestAccounts" });
           return accounts;
-        // return this.address ? [this.address] : [];
         case "eth_sendTransaction":
-          const { data: hash } =  await this.communicator.send({ method: "eth_sendTransaction", params });
+          const { data: hash } = await this.communicator.send({ method: "eth_sendTransaction", params });
 
           return hash;
         case "personal_sign":
-            const { data: signedHash } =  await this.communicator.send({ method: "eth_sendTransaction", params });
-
-            return signedHash;
+          const { data: signedHash } = await this.communicator.send({ method: "eth_sendTransaction", params });
+          return signedHash;
         case "wallet_switchEthereumChain":
           // this.chainId = params[0].chainId;
           // this.networkVersion = Number(params[0].chainId);
@@ -40,7 +38,7 @@ export class PixelSdk {
           // this.emit('chainChanged', params[0].chainId);
           return true;
         case "eth_chainId": {
-          const { data: chainId } =  await this.communicator.send({ method: "eth_chainId" });
+          const { data: chainId } = await this.communicator.send({ method: "eth_chainId" });
 
           return chainId;
         }
@@ -49,6 +47,7 @@ export class PixelSdk {
           return null;
       }
     } catch (error) {
+      pixelLogger.error(error.message);
       throw error;
     }
   };

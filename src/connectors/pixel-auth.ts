@@ -11,6 +11,10 @@ export class PixelAuth {
     return secret;
   }
 
+  public clean() {
+    localStorage.removeItem(PIXEL_AUTH_KEY);
+  }
+
   protected read() {
     return localStorage.getItem(PIXEL_AUTH_KEY);
   }
