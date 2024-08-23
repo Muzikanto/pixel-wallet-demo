@@ -1,15 +1,28 @@
+import axios, { type AxiosResponse } from "axios";
 import { type Socket, io } from "socket.io-client";
 import { PixelAuth } from "./pixel-auth.ts";
+
+const url = "http://127.0.0.01:4018/api/v1";
 
 type IPixelRequest = { method: string; params?: any[] };
 type IPixelResult = { data?: any; status?: number };
 
+type IPixelWallet = {
+  address: string;
+  chainId: number;
+};
+
 export class PixelCommunicator {
   protected socket: Socket;
   protected auth = new PixelAuth();
+  protected readonly httpUrl: string;
+  protected readonly wsUrl: string;
 
   constructor(opts: { url: string }) {
-    const socket = io(opts.url, {
+    this.wsUrl = opts.url.includes(":4000") ? "ws://" + opts.url : "wss://" + opts.url;
+    this.httpUrl = opts.url.includes(":4000") ? "http://" + opts.url : "https://" + opts.url;
+
+    const socket = io(this.wsUrl, {
       reconnectionDelayMax: 10000,
       auth: {
         signature: this.auth.get(),
@@ -48,5 +61,39 @@ export class PixelCommunicator {
         resolve(result);
       });
     });
+  }
+
+  public async waitForAddress(): Promise<string> {
+    return new Promise((resolve) => {
+      this.socket.on(`result_eth_requestAccounts`, (result: string[]) => {
+        resolve(result);
+      });
+    });
+  }
+
+  public async waitForChainId(): Promise<number> {
+    return new Promise((resolve) => {
+      this.socket.on(`result_eth_chainId`, (result: number) => {
+        resolve(result);
+      });
+    });
+  }
+
+  public async getWalletAddress() {
+    const { data } = await axios.get<{ data: IPixelWallet }, AxiosResponse<{ data: IPixelWallet }>>(
+      "/api/v1/wallet/get",
+      { baseURL: this.httpUrl, params: { userSignature: this.auth.get() } },
+    );
+
+    return data?.data?.address;
+  }
+
+  public async getWalletChainId() {
+    const { data } = await axios.get<{ data: IPixelWallet }, AxiosResponse<{ data: IPixelWallet }>>(
+      "/api/v1/wallet/get",
+      { baseURL: this.httpUrl, params: { userSignature: this.auth.get() } },
+    );
+
+    return data?.data?.chainId;
   }
 }

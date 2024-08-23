@@ -30,7 +30,7 @@ export class PixelAuth {
     const value = new Array(4)
       .fill(0)
       .map(() => Math.floor(Math.random() * 100_000_000).toString(16))
-      .join(".");
+      .join("-");
     return value;
   }
 }

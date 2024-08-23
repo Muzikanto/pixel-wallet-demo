@@ -6,7 +6,7 @@ export class PixelSdk {
   protected communicator: PixelCommunicator;
 
   constructor(opts: { url?: string }) {
-    this.communicator = new PixelCommunicator({ url: opts.url || "ws://api.hellopixel.network/sdk" });
+    this.communicator = new PixelCommunicator({ url: opts.url || "api.hellopixel.network" });
   }
 
   public connect() {
@@ -25,8 +25,15 @@ export class PixelSdk {
           // запуси сигнатуры в локалсторадж
           // ожидание вебсокета от фронта через бек сюда
 
-          const { data: accounts } = await this.communicator.send({ method: "eth_requestAccounts" });
-          return accounts;
+          let address = await this.communicator.getWalletAddress();
+
+          if (!address) {
+            address = await this.communicator.waitForAddress();
+          }
+
+          return address ? [address] : [];
+        // const { data: accounts } = await this.communicator.send({ method: "eth_requestAccounts" });
+        // return accounts;
         case "eth_sendTransaction":
           const { data: hash } = await this.communicator.send({ method: "eth_sendTransaction", params });
 
@@ -42,7 +49,13 @@ export class PixelSdk {
           // this.emit('chainChanged', params[0].chainId);
           return true;
         case "eth_chainId": {
-          const { data: chainId } = await this.communicator.send({ method: "eth_chainId" });
+          // const { data: chainId } = await this.communicator.send({ method: "eth_chainId" });
+          // return chainId;
+          let chainId = await this.communicator.getWalletChainId();
+
+          if (!chainId) {
+            chainId = await this.communicator.waitForChainId();
+          }
 
           return chainId;
         }
