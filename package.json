@@ -9,7 +9,7 @@
     "lint": "biome check ./src",
     "preview": "vite preview"
   },
-  "homepage": "docs",
+  "homepage": "/pixel-wallet-demo",
   "dependencies": {
     "@tanstack/react-query": "5.45.1",
     "axios": "^1.7.4",

@@ -21,13 +21,10 @@ export class PixelSdk {
     try {
       switch (method) {
         case "eth_requestAccounts":
-          // редирект в бота с сигнатурой
-          // запуси сигнатуры в локалсторадж
-          // ожидание вебсокета от фронта через бек сюда
-
           let address = await this.communicator.getWalletAddress();
 
           if (!address) {
+            window.open(`https://t.me/stage_pixel_bot/wallet?startapp=auth_${this.communicator.auth.get()}`, '_blank');
             address = await this.communicator.waitForAddress();
           }
 

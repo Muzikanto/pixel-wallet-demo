@@ -2,7 +2,7 @@ import axios, { type AxiosResponse } from "axios";
 import { type Socket, io } from "socket.io-client";
 import { PixelAuth } from "./pixel-auth.ts";
 
-const url = "http://127.0.0.01:4018/api/v1";
+// const url = "http://127.0.0.01:4018/api/v1";
 
 type IPixelRequest = { method: string; params?: any[] };
 type IPixelResult = { data?: any; status?: number };
@@ -14,7 +14,7 @@ type IPixelWallet = {
 
 export class PixelCommunicator {
   protected socket: Socket;
-  protected auth = new PixelAuth();
+  public auth = new PixelAuth();
   protected readonly httpUrl: string;
   protected readonly wsUrl: string;
 
@@ -64,9 +64,9 @@ export class PixelCommunicator {
   }
 
   public async waitForAddress(): Promise<string> {
-    return new Promise((resolve) => {
+    return new Promise((resolve: (result: string) => void) => {
       this.socket.on(`result_eth_requestAccounts`, (result: string[]) => {
-        resolve(result);
+        resolve(result[0]);
       });
     });
   }
