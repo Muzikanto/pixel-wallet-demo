@@ -4,9 +4,6 @@ import { PixelAuth } from "./pixel-auth.ts";
 type IPixelRequest = { method: string; params?: any[] };
 type IPixelResult = { data?: any; status?: number };
 
-// const uri = 'ws://api.hellopixel.network/sdk';
-// const uri = "ws://0.0.0.0:4000";
-
 export class PixelCommunicator {
   protected socket: Socket;
   protected auth = new PixelAuth();
