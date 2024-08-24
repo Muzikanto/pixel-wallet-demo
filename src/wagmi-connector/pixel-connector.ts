@@ -5,10 +5,6 @@ import { PixelSdk } from "../sdk/pixel-sdk.ts";
 pixelWallet.type = "pixelWallet";
 
 export function pixelWallet(parameters: { url?: string; botUrl?: string; } = {}) {
-  return version4(parameters);
-}
-
-function version4(parameters: { url?: string; botUrl?: string; } = {}) {
   let walletProvider: any;
   let accountsChanged: any;
   let chainChanged: any;

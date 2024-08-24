@@ -1,5 +1,5 @@
 {
-  "name": "wagmi-project",
+  "name": "@pixel/test-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,20 +12,20 @@
   },
   "homepage": "/pixel-wallet-demo",
   "dependencies": {
-    "@tanstack/react-query": "5.45.1",
     "axios": "^1.7.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "socket.io-client": "^4.7.5",
-    "viem": "latest",
-    "wagmi": "latest"
+    "wagmi": "2.12.5"
   },
   "devDependencies": {
+    "@tanstack/react-query": "5.45.1",
+    "viem": "2.19.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "@biomejs/biome": "^1.8.0",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "@wagmi/cli": "latest",
+    "@wagmi/cli": "2.1.15",
     "buffer": "^6.0.3",
     "typescript": "^5.4.5",
     "vite": "^5.2.11"
