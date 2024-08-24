@@ -5,7 +5,7 @@ import { pixelWallet } from "../src/wagmi-connector/pixel-connector.ts";
 
 const url = 'api.hellopixel.network';
 // const url = "127.0.0.1:4000";
-const botUrl = 'https://t.me/stage_pixel_bot/stage';
+const botUrl = 'tg://telegram.me/stage_pixel_bot/stage';
 
 export const config = createConfig({
   chains: [mainnet, sepolia],
