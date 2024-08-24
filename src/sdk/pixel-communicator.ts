@@ -83,7 +83,7 @@ export class PixelCommunicator {
             const res = await this.getWalletAddress();
 
             if (res) {
-              resolve(res);
+              return resolve(res);
             }
           } catch {}
           i++;
@@ -98,7 +98,7 @@ export class PixelCommunicator {
   }
 
   public async waitForChainId(): Promise<number> {
-    return new Promise((resolve: (result: number) => void, reject: (err: Error) => void) => {
+    return new Promise(async (resolve: (result: number) => void, reject: (err: Error) => void) => {
       // const listener = (result: { data: number; }) => {
       //   if (!isResolved) {
       //     this.socket.off(`result_eth_chainId`, listener);
@@ -114,7 +114,7 @@ export class PixelCommunicator {
             const res = await this.getWalletChainId();
 
             if (res) {
-              resolve(res);
+              return resolve(res);
             }
           } catch {}
           i++;
