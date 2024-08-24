@@ -67,7 +67,7 @@ export class PixelCommunicator {
   }
 
   public async waitForAddress(): Promise<string | undefined> {
-    return new Promise((resolve: (result: string | undefined) => void) => {
+    return new Promise(async (resolve: (result: string | undefined) => void, reject: (err: Error) => void) => {
       // const listener = (result: { data: string[] }) => {
       //   if (!isResolved) {
       //     this.socket.off(`result_eth_requestAccounts`, listener);
@@ -77,28 +77,28 @@ export class PixelCommunicator {
       //
       // this.socket.on(`result_eth_requestAccounts`, listener);
 
-      void (async () => {
-        for(let i = 0; i < 3;) {
-          if (document.hasFocus()) {
-            try {
-              const res = await this.getWalletAddress();
+      for(let i = 0; i < 3;) {
+        if (document.hasFocus()) {
+          try {
+            const res = await this.getWalletAddress();
 
-              if (res) {
-                resolve(res);
-              }
-            } catch {}
-            i++;
-            await sleep(3000);
-          } else {
-            await sleep(100);
-          }
+            if (res) {
+              resolve(res);
+            }
+          } catch {}
+          i++;
+          await sleep(3000);
+        } else {
+          await sleep(100);
         }
-      })();
+      }
+
+      reject(new Error('Connection timeout'));
     });
   }
 
   public async waitForChainId(): Promise<number> {
-    return new Promise((resolve: (result: number) => void) => {
+    return new Promise((resolve: (result: number) => void, reject: (err: Error) => void) => {
       // const listener = (result: { data: number; }) => {
       //   if (!isResolved) {
       //     this.socket.off(`result_eth_chainId`, listener);
@@ -108,23 +108,23 @@ export class PixelCommunicator {
       //
       // this.socket.on(`result_eth_chainId`, listener);
 
-      void (async () => {
-        for(let i = 0; i < 3;) {
-          if (document.hasFocus()) {
-            try {
-              const res = await this.getWalletChainId();
+      for(let i = 0; i < 3;) {
+        if (document.hasFocus()) {
+          try {
+            const res = await this.getWalletChainId();
 
-              if (res) {
-                resolve(res);
-              }
-            } catch {}
-            i++
-            await sleep(3000);
-          } else {
-            await sleep(100);
-          }
+            if (res) {
+              resolve(res);
+            }
+          } catch {}
+          i++;
+          await sleep(3000);
+        } else {
+          await sleep(100);
         }
-      })();
+      }
+
+      reject(new Error('Connection timeout'));
     });
   }
 
