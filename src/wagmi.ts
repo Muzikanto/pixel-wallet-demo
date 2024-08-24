@@ -1,6 +1,6 @@
 import { http, createConfig } from "wagmi";
 import { mainnet, sepolia } from "wagmi/chains";
-import { coinbaseWallet, injected, walletConnect } from "wagmi/connectors";
+// import { coinbaseWallet, injected, walletConnect } from "wagmi/connectors";
 import { pixelWallet } from "./connectors/pixel-connector.ts";
 
 const url = 'api.hellopixel.network';
@@ -9,10 +9,10 @@ const url = 'api.hellopixel.network';
 export const config = createConfig({
   chains: [mainnet, sepolia],
   connectors: [
-    injected(),
-    coinbaseWallet(),
+    // injected(),
+    // coinbaseWallet(),
     pixelWallet({ url, botUrl: 'https://t.me/stage_pixel_bot/stage' }),
-    walletConnect({ projectId: "b2634aede1fbadbea881afa7c2e7333d" || import.meta.env.VITE_WC_PROJECT_ID }),
+    // walletConnect({ projectId: "b2634aede1fbadbea881afa7c2e7333d" || import.meta.env.VITE_WC_PROJECT_ID }),
   ],
   transports: {
     [mainnet.id]: http(),

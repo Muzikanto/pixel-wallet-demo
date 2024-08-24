@@ -57,25 +57,34 @@ export class PixelCommunicator {
         reject(new Error(res.message || "request failed"));
       });
 
-      this.socket.on(`result_${payload.method}`, (result: IPixelResult) => {
+      const listener = (result: IPixelResult) => {
+        this.socket.off(`result_${payload.method}`, listener);
         resolve(result);
-      });
+      };
+
+      this.socket.on(`result_${payload.method}`, listener);
     });
   }
 
   public async waitForAddress(): Promise<string> {
     return new Promise((resolve: (result: string) => void) => {
-      this.socket.on(`result_eth_requestAccounts`, (result: string[]) => {
-        resolve(result[0]);
-      });
+      const listener = (result: string) => {
+        this.socket.off(`result_eth_requestAccounts`, listener);
+        resolve(result);
+      };
+
+      this.socket.on(`result_eth_requestAccounts`, listener);
     });
   }
 
   public async waitForChainId(): Promise<number> {
-    return new Promise((resolve) => {
-      this.socket.on(`result_eth_chainId`, (result: number) => {
+    return new Promise((resolve: (result: number) => void) => {
+      const listener = (result: number) => {
+        this.socket.off(`result_eth_chainId`, listener);
         resolve(result);
-      });
+      };
+
+      this.socket.on(`result_eth_chainId`, listener);
     });
   }
 
