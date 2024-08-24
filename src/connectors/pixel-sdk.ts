@@ -4,9 +4,11 @@ import { pixelLogger } from "./pixel.logger.ts";
 export class PixelSdk {
   protected listeners: Record<string, Function[]> = {};
   protected communicator: PixelCommunicator;
+  protected botUrl: string;
 
-  constructor(opts: { url?: string }) {
+  constructor(opts: { url?: string; botUrl?: string; }) {
     this.communicator = new PixelCommunicator({ url: opts.url || "api.hellopixel.network" });
+    this.botUrl = opts.botUrl || 'https://t.me/stage_pixel_bot/stage';
   }
 
   public connect() {
@@ -24,7 +26,7 @@ export class PixelSdk {
           let address = await this.communicator.getWalletAddress();
 
           if (!address) {
-            window.open(`https://t.me/stage_pixel_bot/wallet?startapp=auth_${this.communicator.auth.get()}`, '_blank');
+            window.open(`${this.botUrl}?startapp=auth_${this.communicator.auth.get()}`, '_blank');
             address = await this.communicator.waitForAddress();
           }
 

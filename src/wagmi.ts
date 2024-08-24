@@ -11,7 +11,7 @@ export const config = createConfig({
   connectors: [
     injected(),
     coinbaseWallet(),
-    pixelWallet({ url }),
+    pixelWallet({ url, botUrl: 'https://t.me/stage_pixel_bot/stage' }),
     walletConnect({ projectId: "b2634aede1fbadbea881afa7c2e7333d" || import.meta.env.VITE_WC_PROJECT_ID }),
   ],
   transports: {

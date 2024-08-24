@@ -4,11 +4,11 @@ import { PixelSdk } from "./pixel-sdk.ts";
 
 pixelWallet.type = "pixelWallet";
 
-export function pixelWallet(parameters: { url?: string } = {}) {
+export function pixelWallet(parameters: { url?: string; botUrl?: string; } = {}) {
   return version4(parameters);
 }
 
-function version4(parameters: { url?: string } = {}) {
+function version4(parameters: { url?: string; botUrl?: string; } = {}) {
   let walletProvider: any;
   let accountsChanged: any;
   let chainChanged: any;
@@ -98,7 +98,7 @@ function version4(parameters: { url?: string } = {}) {
       },
       async getProvider() {
         if (!walletProvider) {
-          walletProvider = new PixelSdk({ url: parameters.url });
+          walletProvider = new PixelSdk({ url: parameters.url, botUrl: parameters.botUrl });
           return walletProvider;
         }
         return walletProvider;
