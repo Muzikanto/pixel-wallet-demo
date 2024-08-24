@@ -32,7 +32,7 @@ export class PixelCommunicator {
     });
 
     this.socket = socket;
-    socket.connect();
+    this.connect();
   }
 
   public connect() {
@@ -50,8 +50,6 @@ export class PixelCommunicator {
   }
 
   public async send(payload: IPixelRequest): Promise<{ data?: any; status?: number }> {
-    this.connect();
-
     return new Promise((resolve: (result: IPixelResult) => void, reject: (err: Error) => void) => {
       this.socket.emit(`request_${payload.method}`, "", (res: any) => {
         reject(new Error(res.message || "request failed"));
@@ -66,11 +64,11 @@ export class PixelCommunicator {
     });
   }
 
-  public async waitForAddress(): Promise<string> {
-    return new Promise((resolve: (result: string) => void) => {
-      const listener = (result: string) => {
+  public async waitForAddress(): Promise<string | undefined> {
+    return new Promise((resolve: (result: string | undefined) => void) => {
+      const listener = (result: { data: string[] }) => {
         this.socket.off(`result_eth_requestAccounts`, listener);
-        resolve(result);
+        resolve(result.data?.[0]);
       };
 
       this.socket.on(`result_eth_requestAccounts`, listener);
@@ -78,10 +76,12 @@ export class PixelCommunicator {
   }
 
   public async waitForChainId(): Promise<number> {
+    this.connect();
+
     return new Promise((resolve: (result: number) => void) => {
-      const listener = (result: number) => {
+      const listener = (result: { data: number; }) => {
         this.socket.off(`result_eth_chainId`, listener);
-        resolve(result);
+        resolve(result?.data || 19);
       };
 
       this.socket.on(`result_eth_chainId`, listener);

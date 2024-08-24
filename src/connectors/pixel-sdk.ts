@@ -23,7 +23,7 @@ export class PixelSdk {
     try {
       switch (method) {
         case "eth_requestAccounts":
-          let address = await this.communicator.getWalletAddress();
+          let address: string | undefined = await this.communicator.getWalletAddress();
 
           if (!address) {
             window.open(`${this.botUrl}?startapp=auth_${this.communicator.auth.get()}`, '_blank');

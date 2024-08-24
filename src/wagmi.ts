@@ -3,8 +3,8 @@ import { mainnet, sepolia } from "wagmi/chains";
 // import { coinbaseWallet, injected, walletConnect } from "wagmi/connectors";
 import { pixelWallet } from "./connectors/pixel-connector.ts";
 
-const url = 'api.hellopixel.network';
-// const url = "127.0.0.1:4000";
+// const url = 'api.hellopixel.network';
+const url = "127.0.0.1:4000";
 
 export const config = createConfig({
   chains: [mainnet, sepolia],
