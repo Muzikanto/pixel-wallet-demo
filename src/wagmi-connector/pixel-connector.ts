@@ -1,6 +1,6 @@
 import { ChainNotConfiguredError, createConnector } from "@wagmi/core";
 import { SwitchChainError, UserRejectedRequestError, getAddress, numberToHex } from "viem";
-import { PixelSdk } from "./pixel-sdk.ts";
+import { PixelSdk } from "../sdk/pixel-sdk.ts";
 
 pixelWallet.type = "pixelWallet";
 
