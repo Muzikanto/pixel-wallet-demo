@@ -1,8 +1,16 @@
 import axios, { type AxiosResponse } from "axios";
 import { type Socket, io } from "socket.io-client";
 import { PixelAuth } from "./pixel-auth.ts";
+import {waitForRequestReady} from "./utils.ts";
 
-const sleep = (time: number) => new Promise(r1 => setTimeout(r1, time));
+// const listener = (result: { data: number; }) => {
+//   if (!isResolved) {
+//     this.socket.off(`result_eth_chainId`, listener);
+//     resolve(result?.data || 19);
+//   }
+// };
+//
+// this.socket.on(`result_eth_chainId`, listener);
 
 // const url = "http://127.0.0.01:4018/api/v1";
 
@@ -67,65 +75,15 @@ export class PixelCommunicator {
   }
 
   public async waitForAddress(): Promise<string | undefined> {
-    return new Promise(async (resolve: (result: string | undefined) => void, reject: (err: Error) => void) => {
-      // const listener = (result: { data: string[] }) => {
-      //   if (!isResolved) {
-      //     this.socket.off(`result_eth_requestAccounts`, listener);
-      //     resolve(result.data?.[0]);
-      //   }
-      // };
-      //
-      // this.socket.on(`result_eth_requestAccounts`, listener);
-
-      for(let i = 0; i < 3;) {
-        if (document.hasFocus()) {
-          try {
-            const res = await this.getWalletAddress();
-
-            if (res) {
-              return resolve(res);
-            }
-          } catch {}
-          i++;
-          await sleep(3000);
-        } else {
-          await sleep(100);
-        }
-      }
-
-      reject(new Error('Connection timeout'));
-    });
+    return waitForRequestReady(() => this.getWalletAddress());
   }
 
   public async waitForChainId(): Promise<number> {
-    return new Promise(async (resolve: (result: number) => void, reject: (err: Error) => void) => {
-      // const listener = (result: { data: number; }) => {
-      //   if (!isResolved) {
-      //     this.socket.off(`result_eth_chainId`, listener);
-      //     resolve(result?.data || 19);
-      //   }
-      // };
-      //
-      // this.socket.on(`result_eth_chainId`, listener);
+    return waitForRequestReady(() => this.getWalletChainId());
+  }
 
-      for(let i = 0; i < 3;) {
-        if (document.hasFocus()) {
-          try {
-            const res = await this.getWalletChainId();
-
-            if (res) {
-              return resolve(res);
-            }
-          } catch {}
-          i++;
-          await sleep(3000);
-        } else {
-          await sleep(100);
-        }
-      }
-
-      reject(new Error('Connection timeout'));
-    });
+  public async waitForRequest(requestSignature: string): Promise<string> {
+    return waitForRequestReady(() => this.getRequestResult(requestSignature));
   }
 
   public async getWalletAddress() {
@@ -144,5 +102,32 @@ export class PixelCommunicator {
     );
 
     return data?.data?.chainId;
+  }
+
+  public async createRequest(requestSignature: string, event: string, eventContext: object) {
+    const { data } = await axios.post<{ data: any }, AxiosResponse<{ data: any }>>(
+        "/api/v1/wallet/request/create",
+        { userSignature: this.auth.get(), signature: requestSignature, event, eventContext },
+        { baseURL: this.httpUrl },
+    );
+
+    return data?.data;
+  }
+
+  public async getRequestResult(requestSignature: string) {
+    const { data } = await axios.get<{ data: string }, AxiosResponse<{ data: string }>>(
+        "/api/v1/wallet/request/get",
+        { baseURL: this.httpUrl, params: { userSignature: this.auth.get(), signature: requestSignature } },
+    );
+
+    return data?.data;
+  }
+
+  public getRequestSignature() {
+    const value = new Array(4)
+        .fill(0)
+        .map(() => Math.floor(Math.random() * 100_000_000).toString(16))
+        .join("-");
+    return value;
   }
 }

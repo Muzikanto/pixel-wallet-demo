@@ -40,14 +40,19 @@ export class PixelSdk {
           }
 
           return address ? [address] : [];
-        // const { data: accounts } = await this.communicator.send({ method: "eth_requestAccounts" });
-        // return accounts;
         case "eth_sendTransaction":
-          const { data: hash } = await this.communicator.send({ method: "eth_sendTransaction", params });
-
-          return hash;
         case "personal_sign":
-          const { data: signedHash } = await this.communicator.send({ method: "eth_sendTransaction", params });
+          const requestSignature = this.communicator.getRequestSignature();
+          await this.communicator.createRequest(requestSignature, method, { params });
+
+          const url = `${this.botUrl}?startapp=sig_${requestSignature}`;
+
+          setTimeout(() => {
+            window.open(url, '_blank');
+          }, 0);
+
+          const signedHash = await this.communicator.waitForRequest(requestSignature);
+
           return signedHash;
         case "wallet_switchEthereumChain":
           // this.chainId = params[0].chainId;
@@ -57,8 +62,6 @@ export class PixelSdk {
           // this.emit('chainChanged', params[0].chainId);
           return true;
         case "eth_chainId": {
-          // const { data: chainId } = await this.communicator.send({ method: "eth_chainId" });
-          // return chainId;
           let chainId = await this.communicator.getWalletChainId();
 
           if (!chainId) {
