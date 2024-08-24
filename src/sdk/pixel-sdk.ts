@@ -22,6 +22,11 @@ export class PixelSdk {
   request = async ({ method, params = [] }: { method: string; params: any[] }) => {
     try {
       switch (method) {
+        case 'eth_accounts': {
+          let address: string | undefined = await this.communicator.getWalletAddress();
+
+          return address ? [address] : [];
+        }
         case "eth_requestAccounts":
           let address: string | undefined = await this.communicator.getWalletAddress();
 
@@ -30,7 +35,7 @@ export class PixelSdk {
 
             setTimeout(() => {
               window.open(url, '_blank');
-            });
+            }, 0);
             address = await this.communicator.waitForAddress();
           }
 

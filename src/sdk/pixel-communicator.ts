@@ -2,6 +2,8 @@ import axios, { type AxiosResponse } from "axios";
 import { type Socket, io } from "socket.io-client";
 import { PixelAuth } from "./pixel-auth.ts";
 
+const sleep = (time: number) => new Promise(r1 => setTimeout(r1, time));
+
 // const url = "http://127.0.0.01:4018/api/v1";
 
 type IPixelRequest = { method: string; params?: any[] };
@@ -32,12 +34,12 @@ export class PixelCommunicator {
     });
 
     this.socket = socket;
-    this.connect();
+    // this.connect();
   }
 
   public connect() {
     if (!this.socket.connected) {
-      this.socket.connect();
+      // this.socket.connect();
     }
   }
 
@@ -66,25 +68,63 @@ export class PixelCommunicator {
 
   public async waitForAddress(): Promise<string | undefined> {
     return new Promise((resolve: (result: string | undefined) => void) => {
-      const listener = (result: { data: string[] }) => {
-        this.socket.off(`result_eth_requestAccounts`, listener);
-        resolve(result.data?.[0]);
-      };
+      // const listener = (result: { data: string[] }) => {
+      //   if (!isResolved) {
+      //     this.socket.off(`result_eth_requestAccounts`, listener);
+      //     resolve(result.data?.[0]);
+      //   }
+      // };
+      //
+      // this.socket.on(`result_eth_requestAccounts`, listener);
 
-      this.socket.on(`result_eth_requestAccounts`, listener);
+      void (async () => {
+        for(let i = 0; i < 3;) {
+          if (document.hasFocus()) {
+            try {
+              const res = await this.getWalletAddress();
+
+              if (res) {
+                resolve(res);
+              }
+            } catch {}
+            i++;
+            await sleep(3000);
+          } else {
+            await sleep(100);
+          }
+        }
+      })();
     });
   }
 
   public async waitForChainId(): Promise<number> {
-    this.connect();
-
     return new Promise((resolve: (result: number) => void) => {
-      const listener = (result: { data: number; }) => {
-        this.socket.off(`result_eth_chainId`, listener);
-        resolve(result?.data || 19);
-      };
+      // const listener = (result: { data: number; }) => {
+      //   if (!isResolved) {
+      //     this.socket.off(`result_eth_chainId`, listener);
+      //     resolve(result?.data || 19);
+      //   }
+      // };
+      //
+      // this.socket.on(`result_eth_chainId`, listener);
 
-      this.socket.on(`result_eth_chainId`, listener);
+      void (async () => {
+        for(let i = 0; i < 3;) {
+          if (document.hasFocus()) {
+            try {
+              const res = await this.getWalletChainId();
+
+              if (res) {
+                resolve(res);
+              }
+            } catch {}
+            i++
+            await sleep(3000);
+          } else {
+            await sleep(100);
+          }
+        }
+      })();
     });
   }
 
