@@ -26,7 +26,11 @@ export class PixelSdk {
           let address: string | undefined = await this.communicator.getWalletAddress();
 
           if (!address) {
-            window.open(`${this.botUrl}?startapp=auth_${this.communicator.auth.get()}`, '_blank');
+            const link = document.createElement("a")
+            link.href = `${this.botUrl}?startapp=auth_${this.communicator.auth.get()}`;
+            link.target = "_blank";
+            link.click();
+
             address = await this.communicator.waitForAddress();
           }
 
