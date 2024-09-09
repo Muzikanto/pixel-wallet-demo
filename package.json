@@ -1,13 +1,15 @@
 {
-  "name": "@pixel/test-app",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@muzikanto/pixel-sdk",
+  "private": false,
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "BROWSER=none vite",
     "build": "tsc && vite build",
     "lint": "biome check demo",
     "preview": "vite preview",
+    "build:lib": "tsc --project tsconfig.build.json",
+    "prepublishOnly": "yarn build:lib",
     "ngrok": "ngrok http --domain=snapper-stirred-humbly.ngrok-free.app 5173 --host-header='localhost:5173'"
   },
   "homepage": "/pixel-wallet-demo",

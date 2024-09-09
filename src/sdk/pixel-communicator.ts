@@ -1,7 +1,7 @@
 import axios, { type AxiosResponse } from "axios";
 import { type Socket, io } from "socket.io-client";
-import { PixelAuth } from "./pixel-auth.ts";
-import {waitForRequestReady} from "./utils.ts";
+import { PixelAuth } from "./pixel-auth";
+import {waitForRequestReady} from "./utils";
 
 // const listener = (result: { data: number; }) => {
 //   if (!isResolved) {

@@ -1,5 +1,5 @@
-import { PixelCommunicator } from "./pixel-communicator.ts";
-import { pixelLogger } from "./pixel.logger.ts";
+import { PixelCommunicator } from "./pixel-communicator";
+import { pixelLogger } from "./pixel.logger";
 
 export class PixelSdk {
   protected listeners: Record<string, Function[]> = {};
@@ -43,6 +43,7 @@ export class PixelSdk {
         case "eth_sendTransaction":
         case "personal_sign":
           const requestSignature = this.communicator.getRequestSignature();
+
           await this.communicator.createRequest(requestSignature, method, { params });
 
           const url = `${this.botUrl}?startapp=sig_${requestSignature}`;
