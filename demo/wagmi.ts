@@ -1,7 +1,7 @@
 import { http, createConfig } from "wagmi";
 import { songbird } from "wagmi/chains";
 // import { coinbaseWallet, injected, walletConnect } from "wagmi/connectors";
-import { pixelWallet } from "../src/wagmi-connector/pixel-connector.ts";
+import { pixelWallet } from "../src/wagmi";
 
 const url = 'api.hellopixel.network';
 // const url = "127.0.0.1:4000";
