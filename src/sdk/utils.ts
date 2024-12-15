@@ -1,4 +1,4 @@
-import {pixelLogger} from "./pixel.logger.ts";
+import {pixelLogger} from "./pixel.logger";
 
 const sleep = (time: number) => new Promise(r1 => setTimeout(r1, time));
 
