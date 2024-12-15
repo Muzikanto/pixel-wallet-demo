@@ -28,7 +28,7 @@ function App() {
           <br />
           chainId: {account.chainId}
           <br/>
-          balance: {balance.data ? (Number(balance.data) / 10 ** 18).toFixed(2) : 0}
+          balance: {balance.data ? (Number(balance.data) / 10 ** 18).toFixed(2) : 0} PXLs
           <br/>
           signed: {signMessageData ? signMessageData : '-'}
         </div>

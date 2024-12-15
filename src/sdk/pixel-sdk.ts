@@ -1,6 +1,18 @@
 import { PixelCommunicator } from "./pixel-communicator";
 import { pixelLogger } from "./pixel.logger";
 
+const TG = (window as any).Telegram
+const IS_TELEGRAM = !!TG?.WebApp?.initData;
+
+function openLink(url: string) {
+  if (IS_TELEGRAM && url.startsWith('https://t.me')) {
+    TG.WebApp.openTelegramLink(url);
+  } else {
+    window.open(url, '_blank');
+  }
+}
+
+
 export class PixelSdk {
   protected listeners: Record<string, Function[]> = {};
   protected communicator: PixelCommunicator;
@@ -34,7 +46,7 @@ export class PixelSdk {
             const url = `${this.botUrl}?startapp=auth_${this.communicator.auth.get()}`;
 
             setTimeout(() => {
-              window.open(url, '_blank');
+              openLink(url);
             }, 0);
             address = await this.communicator.waitForAddress();
           }
@@ -49,7 +61,7 @@ export class PixelSdk {
           const url = `${this.botUrl}?startapp=sig_${requestSignature}`;
 
           setTimeout(() => {
-            window.open(url, '_blank');
+            openLink(url);
           }, 0);
 
           const signedHash = await this.communicator.waitForRequest(requestSignature);
