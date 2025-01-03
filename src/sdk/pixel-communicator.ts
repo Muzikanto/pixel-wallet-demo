@@ -20,6 +20,7 @@ type IPixelResult = { data?: any; status?: number };
 type IPixelWallet = {
   address: string;
   chainId: number;
+  confirmedAt?: number;
 };
 
 export class PixelCommunicator {
@@ -106,7 +107,7 @@ export class PixelCommunicator {
     );
 
     if (!data?.data?.confirmedAt) {
-      return undefined;
+      return 19;
     }
 
     return data?.data?.chainId || 19;
