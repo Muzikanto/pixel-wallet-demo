@@ -46,9 +46,9 @@ export class PixelCommunicator {
   }
 
   public connect() {
-    if (!this.socket.connected) {
+    // if (!this.socket.connected) {
       // this.socket.connect();
-    }
+    // }
   }
 
   public disconnect() {
@@ -92,6 +92,10 @@ export class PixelCommunicator {
       { baseURL: this.httpUrl, params: { userSignature: this.auth.get() } },
     );
 
+    if (!data?.data?.confirmedAt) {
+      return undefined;
+    }
+
     return data?.data?.address;
   }
 
@@ -101,7 +105,23 @@ export class PixelCommunicator {
       { baseURL: this.httpUrl, params: { userSignature: this.auth.get() } },
     );
 
-    return data?.data?.chainId;
+    if (!data?.data?.confirmedAt) {
+      return undefined;
+    }
+
+    return data?.data?.chainId || 19;
+  }
+
+  public async createConnection() {
+    this.auth.clean();
+
+    const { data } = await axios.post<{ data: any }, AxiosResponse<{ data: any }>>(
+        "/api/v2/wallet/connection/create",
+        { userSignature: this.auth.get() },
+        { baseURL: this.httpUrl },
+    );
+
+    return data?.data;
   }
 
   public async createRequest(requestSignature: string, event: string, eventContext: object) {

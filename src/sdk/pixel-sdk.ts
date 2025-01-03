@@ -43,7 +43,9 @@ export class PixelSdk {
           let address: string | undefined = await this.communicator.getWalletAddress();
 
           if (!address) {
-            const url = `${this.botUrl}?startapp=auth_${this.communicator.auth.get()}`;
+            await this.communicator.createConnection();
+
+            const url = `${this.botUrl}?startapp=auth2_${this.communicator.auth.get()}`;
 
             setTimeout(() => {
               openLink(url);

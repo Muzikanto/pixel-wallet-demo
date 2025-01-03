@@ -7,6 +7,7 @@ const url = 'api.hellopixel.network';
 // const url = "127.0.0.1:4000";
 const botUrl = 'https://t.me/stage_pixel_bot/stage';
 // const botUrl = 'tg://telegram.me/stage_pixel_bot/stage';
+// const botUrl = 'http://localhost:8080/connect';
 
 export const config = createConfig({
   chains: [songbird],
